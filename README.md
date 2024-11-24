@@ -1,6 +1,7 @@
 # DiffuSphere - An Object-Oriented Framework for Image Generation using Diffusion Models and their Variants.
 
-**DiffuSphere is a cutting-edge framework** designed to streamline and enhance the process of **image generation using diffusion models**. Built with industry-standard coding methodologies, DiffuSphere ensures high scalability, maintainability, and efficient bug tracking, making it suitable for research and production environments. The framework adopts a modular and object-oriented architecture, enabling developers to extend or customize its components effortlessly while maintaining code clarity and robustness.
+**DiffuSphere is a cutting-edge framework** designed to streamline and enhance the process of **image generation using diffusion models**. Built with industry-standard coding methodologies, DiffuSphere ensures high scalability, maintainability, and efficient bug tracking, making it suitable for research and production environments. 
+The framework adopts a modular and object-oriented architecture, enabling developers to extend or customize its components effortlessly while maintaining code clarity and robustness.
 
 With **DiffuSphere**, **zero coding is required to generate images using the latest and most powerful diffusion model variants**. The framework is designed to work out-of-the-box, allowing users to leverage advanced diffusion models without writing a single line of code. Furthermore, integrating new models into the framework is incredibly straightforward, as 95% of the required code infrastructure is already in place. This allows researchers and developers to focus on innovation rather than boilerplate code.
 
