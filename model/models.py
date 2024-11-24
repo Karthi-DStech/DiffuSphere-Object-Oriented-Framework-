@@ -46,10 +46,8 @@ class BaseModel(object):
 
         self._get_device()
 
-        if model is not None:
-            self.function_approximator = model.to(self._device)
-        else:
-            self.function_approximator = None
+        # Initialize the model if provided
+        self.model = model.to(self._device) if model else None
 
         # Check if the artifacts folder exists
         artifacts_dir = self._opt.save_dir
@@ -158,6 +156,8 @@ class BaseModel(object):
         eps_predicted : torch.Tensor
             The predicted noise.
         """
+        self.model.train()
+
         self.batch_size = self._opt.batch_size
         self.dataset = dataset
 
@@ -174,11 +174,9 @@ class BaseModel(object):
             torch.sqrt(alpha_bar_t) * x0 + torch.sqrt(1 - alpha_bar_t) * eps, t - 1
         )
 
-        self.model.train()
-
         # Train the model
         if train_diffusion:
-            self.model.zero_grad()
+            self.model.optimizer.zero_grad()
             loss = self._compute_loss(eps, eps_predicted)
             loss.backward()
             self.model.optimizer.step()
@@ -213,6 +211,8 @@ class BaseModel(object):
         train_diffusion : bool
             Whether to train the diffusion model.
         """
+        self.model.train()
+
         x0 = dataset
         actual_batch_size = x0.size(0)
         t = torch.randint(
@@ -234,9 +234,9 @@ class BaseModel(object):
             labels = None
 
         # Conditional and unconditional predictions for CFG
-        eps_uncond = self.function_approximator(noisy_input, t - 1, labels=None)
+        eps_uncond = self.model(noisy_input, t - 1, labels=None)
         eps_cond = (
-            self.function_approximator(noisy_input, t - 1, labels=labels)
+            self.model(noisy_input, t - 1, labels=labels)
             if labels is not None
             else eps_uncond
         )
@@ -246,14 +246,99 @@ class BaseModel(object):
 
         # Train the model
         if train_diffusion:
-            self.function_approximator.train()
-            optimizer = torch.optim.Adam(
-                self.function_approximator.parameters(), lr=self._opt.lr
-            )
-            optimizer.zero_grad()
+
+            self.model.optimizer.zero_grad()
             loss = self._compute_loss(eps, eps_predicted)
             loss.backward()
-            optimizer.step()
+            self.model.optimizer.step()
+
+        return eps, eps_predicted
+
+    def cfg_plus_train(
+        self,
+        batch_size: int,
+        cfg_scale: float,
+        label_usage: float,
+        dataset=None,
+        train_diffusion: bool = True,
+    ) -> None:
+        """
+        This method trains the model using an enhanced CFG method (CFG+).
+
+        Parameters
+        ----------
+        batch_size : int
+            The batch size to use for training.
+
+        cfg_scale : float
+            The scale of the Gaussian noise.
+
+        label_usage : float
+            The percentage of labels to use.
+
+        dataset : torch.Tensor
+            The dataset to use for training.
+
+        augmentation_func : Callable, optional
+            A function to apply additional augmentations or modifications to inputs.
+
+        train_diffusion : bool
+            Whether to train the diffusion model.
+        """
+
+        self.model.train()
+
+        if self._opt.model_name == "cfg_plus_ddpm":
+            if self._opt.control_cfg_scale:
+                if not (0 <= cfg_scale <= 1):
+                    raise ValueError("cfg_scale must be in the range [0, 1] for CFG++")
+
+        x0 = dataset
+        actual_batch_size = x0.size(0)
+        t = torch.randint(
+            1, self.T + 1, (actual_batch_size,), device=self._device, dtype=torch.long
+        )
+        eps = torch.randn_like(x0)
+
+        # Calculate noisy input
+        alpha_bar_t = self.alpha_bar[t - 1].view(-1, 1, 1, 1)
+        noisy_input = torch.sqrt(alpha_bar_t) * x0 + torch.sqrt(1 - alpha_bar_t) * eps
+
+        # Labels
+        labels = self._send_to_device(
+            torch.randint(0, self._opt.num_classes, (actual_batch_size,))
+        )
+
+        # Randomly decide whether to use labels
+        if np.random.random() >= label_usage:
+            labels = None
+
+        # Conditional and unconditional predictions
+        eps_uncond = self.model(noisy_input, t - 1, labels=None)
+        eps_cond = (
+            self.model(noisy_input, t - 1, labels=labels)
+            if labels is not None
+            else eps_uncond
+        )
+
+        # CFG interpolation (only used for denoising step)
+        eps_predicted = eps_uncond + cfg_scale * (eps_cond - eps_uncond)
+
+        # CFG ++ interpolation (used for renoising step)
+        x_denoised = (
+            noisy_input - torch.sqrt(1 - alpha_bar_t) * eps_predicted
+        ) / torch.sqrt(alpha_bar_t)
+
+        noisy_input = (
+            torch.sqrt(self.alpha_bar[t - 2].view(-1, 1, 1, 1)) * x_denoised
+            + torch.sqrt(1 - self.alpha_bar[t - 2].view(-1, 1, 1, 1)) * eps_uncond
+        )
+
+        if train_diffusion:
+            self.model.optimizer.zero_grad()
+            loss = self._compute_loss(eps, eps_predicted)
+            loss.backward()
+            self.model.optimizer.optimizer.step()
 
         return eps, eps_predicted
 
@@ -319,7 +404,7 @@ class BaseModel(object):
                 * (
                     x
                     - ((1 - alpha_t) / torch.sqrt(1 - alpha_bar_t))
-                    * self.function_approximator(x, t - 1)
+                    * self.model(x, t - 1)
                 )
             )
             sigma = torch.sqrt(beta_t)

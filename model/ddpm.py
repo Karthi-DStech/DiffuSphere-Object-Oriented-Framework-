@@ -131,7 +131,7 @@ class DDPM(BaseModel):
 
 
 # ----- Condition based model instance for Diffusion Model (DDPM) ----->>>>
-# ----- Classifier Free Guidance ----->>>>
+# ----- Classifier Free Guidance and CFG ++ ----->>>>
 
 
 class DDPMCFG(BaseModel):
@@ -168,12 +168,7 @@ class DDPMCFG(BaseModel):
 
         # Initialize the model (e.g., UNet) and move it to the device
         self._create_networks()
-        self.model = self.function_approximator.to(self._device)
-
-        # Define the betas and alphas for DDPM
-        self.beta = torch.linspace(1e-4, 0.02, T).to(self._device)
-        self.alpha = 1 - self.beta
-        self.alpha_bar = torch.cumprod(self.alpha, dim=0)
+        self.model = self._cfg_unet.to(self._device)
 
         # Define the betas and alphas for DDPM
         self.beta = torch.linspace(1e-4, 0.02, T).to(self._device)
@@ -192,19 +187,15 @@ class DDPMCFG(BaseModel):
         -------
         Initialised the UNet model.
         """
-        self.function_approximator = make_network(
+        self._cfg_unet = make_network(
             network_name="cfg_unet",
             opt=self._opt,
             ch=self._opt.unet_ch,
             in_ch=self._opt.in_channels,
             num_classes=self._opt.num_classes,
         )
-        assert (
-            self.function_approximator is not None
-        ), "Function approximator creation failed!"
 
-        # Move to the correct device
-        self.function_approximator = self.function_approximator.to(self._device)
+        self._send_to_device(self._cfg_unet)
 
     def _make_loss(self):
         """

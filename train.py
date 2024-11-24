@@ -49,7 +49,7 @@ def run(opt: argparse.Namespace) -> None:
                 "dataset": images,
             }
 
-            if opt.model_name == "cfg_ddpm":
+            if opt.model_name in ["cfg_ddpm", "cfg_plus_ddpm"]:
                 train_params["cfg_scale"] = opt.cfg_scale
                 train_params["label_usage"] = opt.label_usage
 
