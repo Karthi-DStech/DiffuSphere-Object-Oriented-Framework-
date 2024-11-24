@@ -47,7 +47,7 @@ Each of these models provides flexibility for various use cases, balancing contr
 2. **`mnist.py`**: Contains dataset classes for handling MNIST training and testing datasets.
 3. **`topographies.py`**: Implements the `BiologicalObservation` dataset class for working with biological images and topographical data.
 
-<hr style="border: 0.5px solid #ccc;" />
+<hr style="border: 0; height: 1px; background: #e1e4e8;" />
 
 #### `model` Directory
 1. **`attention_block.py`**: Implements attention mechanisms for improving the UNet model's performance.
