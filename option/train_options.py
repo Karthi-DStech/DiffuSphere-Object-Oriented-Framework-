@@ -25,7 +25,7 @@ class TrainOptions(BaseOptions):
             "--model_name",
             type=str,
             default="ddpm_35m",
-            choices=["ddpm_35m", "cfg_ddpm"],
+            choices=["ddpm_35m", "cfg_ddpm", "cfg_plus_ddpm"],
             help="Name of the model to use",
         )
 
@@ -117,6 +117,14 @@ class TrainOptions(BaseOptions):
             help="Number of classes",
         )
 
+        # ----- CFG ++ parameters ------>>>>
+
+        self._parser.add_argument(
+            "--control_cfg_scale",
+            type=bool,
+            default=True,
+            help="To control the scale weights for the CFG Plus DDPM",
+        )
         # New parameters should be added here
 
         self._is_train = True

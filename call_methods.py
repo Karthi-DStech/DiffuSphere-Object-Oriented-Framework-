@@ -27,6 +27,8 @@ def make_model(model_name: str, *args, **kwargs) -> Union[BaseModel, BaseModel]:
     """
     model = None
 
+    # ------ Model instance for DDPM ------
+
     if model_name.lower() == "ddpm_35m":
         from model.ddpm import DDPM
 
@@ -34,12 +36,23 @@ def make_model(model_name: str, *args, **kwargs) -> Union[BaseModel, BaseModel]:
         model.train_method = model.train
         print("DDPM will be trained using the 'DDPM.train method'...")
 
+    # ------ Model instance for DDPM with CFG ------
+
     elif model_name.lower() == "cfg_ddpm":
         from model.ddpm import DDPMCFG
 
         model = DDPMCFG(*args, **kwargs)
         model.train_method = model.cfg_train
         print("DDPM will be trained using the 'DDPMCFG.cfg_train method'...")
+
+    # ------ Model instance for DDPM with CFG ++ ------
+
+    elif model_name.lower() == "cfg_plus_ddpm":
+        from model.ddpm import DDPMCFG
+
+        model = DDPMCFG(*args, **kwargs)
+        model.train_method = model.cfg_plus_train
+        print("DDPM will be trained using the 'DDPMCFG.cfg_plus_train method'...")
 
     else:
         raise ValueError(f"Invalid model name: {model_name}")
@@ -67,10 +80,14 @@ def make_network(network_name: str, *args, **kwargs) -> torch.nn.Module:
     """
     network = None
 
+    # ------ Network instance for DDPM ------
+
     if network_name.lower() == "ddpm_unet":
         from model.unet import UNet
 
         network = UNet(*args, **kwargs)
+
+    # ------ Network instance for DDPM with CFG and CFG ++ ------
 
     elif network_name.lower() == "cfg_unet":
         from model.unet import UnetCFG
