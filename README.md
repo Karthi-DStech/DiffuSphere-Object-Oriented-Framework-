@@ -42,16 +42,16 @@ Each of these models provides flexibility for various use cases, balancing contr
 
 ---
 
-### `data` Directory
+#### `data` Directory
 1. **`datasets.py`**: Defines the base class for datasets, including data loading and preprocessing functionalities.
 2. **`mnist.py`**: Contains dataset classes for handling MNIST training and testing datasets.
 3. **`topographies.py`**: Implements the `BiologicalObservation` dataset class for working with biological images and topographical data.
 
 ---
 
-### `model` Directory
+#### `model` Directory
 1. **`attention_block.py`**: Implements attention mechanisms for improving the UNet model's performance.
-2. **`ddpm.py`**: Contains the implementation of Denoising Diffusion Probabilistic Models (DDPM) and its classifier-free guidance variant.
+2. **`ddpm.py`**: Contains the implementation of Denoising Diffusion Probabilistic Models (DDPM) instance and its variants. 
 3. **`downsampling_block.py`**: Implements downsampling operations in the UNet model.
 4. **`models.py`**: Defines the base class for all models, including training and saving mechanisms.
 5. **`networks.py`**: Base class for networks, defining essential methods like forward pass and parameter counting.
@@ -63,7 +63,7 @@ Each of these models provides flexibility for various use cases, balancing contr
 
 ---
 
-### `option` Directory
+#### `option` Directory
 1. **`base_options.py`**: Defines the base configuration options for datasets, models, and training parameters.
 2. **`train_options.py`**: Extends base options with training-specific configurations such as learning rate and optimizer settings.
 
