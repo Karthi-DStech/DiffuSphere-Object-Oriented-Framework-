@@ -141,7 +141,7 @@ python train.py \
 ./train.sh
 ```
 
-#### 4. Predict
+#### 5. Predict
 
 Readme for predict will be updated soon. Apologies!
 
