@@ -2,11 +2,11 @@
 
 **DiffuSphere is a cutting-edge framework** designed to streamline and enhance the process of **image generation using diffusion models**. Built with industry-standard coding methodologies, DiffuSphere ensures high scalability, maintainability, and efficient bug tracking, making it suitable for research and production environments. 
 
-The framework adopts a modular and object-oriented architecture, enabling developers to extend or customize its components effortlessly while maintaining code clarity and robustness.
+- The framework adopts a modular and object-oriented architecture, enabling developers to extend or customize its components effortlessly while maintaining code clarity and robustness.
 
 With **DiffuSphere**, **zero coding is required to generate images using the latest and most powerful diffusion model variants**. The framework is designed to work out-of-the-box, allowing users to leverage advanced diffusion models without writing a single line of code. 
 
-Furthermore, integrating new models into the framework is incredibly straightforward, as 95% of the required code infrastructure is already in place. This allows researchers and developers to focus on innovation rather than boilerplate code.
+- Furthermore, integrating new models into the framework is incredibly straightforward, as 95% of the required code infrastructure is already in place. This allows researchers and developers to focus on innovation rather than boilerplate code.
 
 ### Supported Models
 
@@ -73,3 +73,76 @@ Each of these models provides flexibility for various use cases, balancing contr
 
 
 ## How to Use
+
+Follow these steps to set up and run **DiffuSphere** for training and image generation:
+
+#### 1. Install Requirements
+Ensure you have all the dependencies installed. Run the following command:
+```
+pip install -r requirements.txt
+```
+#### 2. Clone the Repository
+Clone the DiffuSphere repository to your local machine:
+```
+git clone https://github.com/yourusername/DiffuSphere.git
+cd DiffuSphere
+```
+
+#### 3. Create a Repository for Loading Data
+Prepare a directory structure for your data:
+
+Place your training data (e.g., images, labels) in a new directory, preferably located outside the main DiffuSphere repository (to handle large datasets effectively). For example:
+```
+mkdir -p /path/to/large_dataset_repo
+```
+
+Configure the dataset path in the base_options.py file:
+
+Example: Modify the dataset path in base_options.py
+```
+--image_folder = "/path/to/large_dataset_repo/images"
+--label_path = "/path/to/large_dataset_repo/labels.csv"
+```
+
+Also **DiffuSphere is highly configurable via flags** and script modifications:
+
+Flags in base_options.py and train_options.py:
+Dataset parameters like --dataset_name, image size, batch size, and more.
+Training parameters such as learning rate, number of epochs, optimizer type.
+
+#### 4. Start Training
+Run the training process:
+```
+python train.py
+```
+
+#### Optional: Advanced Flag Management with train.sh
+
+1. If you have multiple flags to modify or want a streamlined way to manage configurations:
+
+Open launch and edit the train.sh file:
+
+Example: 
+```
+python train.py \
+--images_folder '../../Dataset/Topographies/raw/FiguresStacked 8X8_4X4_2X2 Embossed' \
+--label_path '../../Dataset/biology_data/TopoChip/MacrophageWithClass.csv' \
+--dataset_name 'biological' \
+--n_epochs 40000 \
+--img_size 64 \
+--batch_size 32 \
+--num_workers 4 \
+
+# Add the parameters and values accordingly
+```
+
+2. Run the script:
+```
+./train.sh
+```
+
+#### 4. Predict
+
+Readme for predict will be updated soon. Apologies!
+
+
