@@ -36,20 +36,21 @@ Each of these models provides flexibility for various use cases, balancing contr
 ## Project Structure and Overview
 
 #### Main Scripts
+- - - - - - - - - -
 
 1. **`call_methods.py`**: Handles the creation of datasets, networks, and models dynamically based on user specifications.
 2. **`train.py`**: Main training script for running and managing the model training loops.
 
-<hr style="border: 0.2px solid #ccc;" />
 
 #### `data` Directory
+- - - - - - - - - - - - 
 1. **`datasets.py`**: Defines the base class for datasets, including data loading and preprocessing functionalities.
 2. **`mnist.py`**: Contains dataset classes for handling MNIST training and testing datasets.
 3. **`topographies.py`**: Implements the `BiologicalObservation` dataset class for working with biological images and topographical data.
 
-<hr style="border: 0; height: 1px; background: #e1e4e8;" />
 
 #### `model` Directory
+- - - - - - - - - - - - - 
 1. **`attention_block.py`**: Implements attention mechanisms for improving the UNet model's performance.
 2. **`ddpm.py`**: Contains the implementation of Denoising Diffusion Probabilistic Models (DDPM) instance and its variants. 
 3. **`downsampling_block.py`**: Implements downsampling operations in the UNet model.
