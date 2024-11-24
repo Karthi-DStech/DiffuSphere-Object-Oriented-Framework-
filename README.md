@@ -40,14 +40,14 @@ Each of these models provides flexibility for various use cases, balancing contr
 1. **`call_methods.py`**: Handles the creation of datasets, networks, and models dynamically based on user specifications.
 2. **`train.py`**: Main training script for running and managing the model training loops.
 
---
+---
 
 #### `data` Directory
 1. **`datasets.py`**: Defines the base class for datasets, including data loading and preprocessing functionalities.
 2. **`mnist.py`**: Contains dataset classes for handling MNIST training and testing datasets.
 3. **`topographies.py`**: Implements the `BiologicalObservation` dataset class for working with biological images and topographical data.
 
-- -
+<hr style="border: 1px solid #ccc;" />
 
 #### `model` Directory
 1. **`attention_block.py`**: Implements attention mechanisms for improving the UNet model's performance.
