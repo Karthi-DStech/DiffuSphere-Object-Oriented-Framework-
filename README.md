@@ -35,7 +35,7 @@ Each of these models provides flexibility for various use cases, balancing contr
 
 ## Project Structure and Overview
 
-### Main Scripts
+#### Main Scripts
 
 1. **`call_methods.py`**: Handles the creation of datasets, networks, and models dynamically based on user specifications.
 2. **`train.py`**: Main training script for running and managing the model training loops.
