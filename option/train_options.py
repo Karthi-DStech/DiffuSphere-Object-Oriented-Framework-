@@ -25,7 +25,20 @@ class TrainOptions(BaseOptions):
             "--model_name",
             type=str,
             default="ddpm_35m",
-            choices=["ddpm_35m", "cfg_ddpm", "cfg_plus_ddpm"],
+            choices=[
+                # -- DDPM Variant Names -- >
+                "ddpm_35m",
+                "ddpm_ema",
+                "ddpm_power_law_ema",
+                # -- DDPM CFGVariant Names -- >
+                "cfg_ddpm",
+                "cfg_ema_ddpm",
+                "cfg_power_law_ema_ddpm",
+                # -- DDPM CFG ++ Variant Names -- >
+                "cfg_plus_ddpm",
+                "cfg_plus_ddpm_ema",
+                "cfg_plus_ddpm_power_law_ema",
+            ],
             help="Name of the model to use",
         )
 
@@ -125,6 +138,59 @@ class TrainOptions(BaseOptions):
             default=True,
             help="To control the scale weights for the CFG Plus DDPM",
         )
+
+        # ----- EMA parameters ------>>>>
+
+        # --ema_apply is set to false by default.
+        # If the model_name is either "ddpm_ema" or "cfg_ema_ddpm" or "cfg_plus_ddpm_ema"
+        # The flag will be set to true in the call_methods.py file.
+
+        self._parser.add_argument(
+            "--ema_apply",
+            type=bool,
+            default=False,
+            help="Apply EMA for Diffusion Models",
+        )
+
+        self._parser.add_argument(
+            "--ema_beta",
+            type=float,
+            default=0.999,
+            help="Beta value for the EMA",
+        )
+
+        self._parser.add_argument(
+            "--ema_start_step",
+            type=int,
+            default=30,  # 2000
+            help="Step to start the EMA",
+        )
+
+        # ----- Power Law EMA parameters ------>>>>
+
+        # --power_ema_apply is set to false by default.
+        # If the model_name is either "ddpm_power_law_ema" or "cfg_power_law_ema_ddpm" or "cfg_plus_ddpm_power_law_ema"
+        # The flag will be set to true in the call_methods.py file.
+
+        self._parser.add_argument(
+            "--power_ema_apply",
+            type=bool,
+            default=False,
+            help="Apply Power Law EMA for Diffusion Models",
+        )
+
+        self._parser.add_argument(
+            "--power_ema_gamma",
+            type=float,
+            default=6.94,
+            choices=[
+                6.94,
+                16.97,
+            ],  # Add more values if needed
+            help="Gamma value for the Power Law EMA. Use 6.94 for a balanced decay profile, "
+            "or 16.97 for a tighter decay profile.",
+        )
+
         # New parameters should be added here
 
         self._is_train = True
