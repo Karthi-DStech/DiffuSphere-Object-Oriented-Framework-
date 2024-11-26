@@ -3,6 +3,7 @@ import sys
 import argparse
 
 from option.train_options import TrainOptions
+from option.enums import ModelNames, TrainScriptParams
 from call_methods import make_dataset, make_model
 from utils.utils import set_seed
 
@@ -45,13 +46,20 @@ def run(opt: argparse.Namespace) -> None:
 
             # Train parameters
             train_params = {
-                "batch_size": opt.batch_size,
-                "dataset": images,
+                TrainScriptParams.BATCH_SIZE: opt.batch_size,
+                TrainScriptParams.DATASET: images,
             }
 
-            if opt.model_name in ["cfg_ddpm", "cfg_plus_ddpm"]:
-                train_params["cfg_scale"] = opt.cfg_scale
-                train_params["label_usage"] = opt.label_usage
+            if opt.model_name in [
+                ModelNames.CFG_DDPM,
+                ModelNames.CFG_DDPM_EMA,
+                ModelNames.CFG_DDPM_PowerLawEMA,
+                ModelNames.CFG_Plus_DDPM,
+                ModelNames.CFG_Plus_DDPM_EMA,
+                ModelNames.CFG_Plus_DDPM_PowerLawEMA,
+            ]:
+                train_params[TrainScriptParams.CFG_SCALE] = opt.cfg_scale
+                train_params[TrainScriptParams.LABEL_USAGE] = opt.label_usage
 
             # Forward pass and training step
             eps, eps_predicted = model.train_method(**train_params)

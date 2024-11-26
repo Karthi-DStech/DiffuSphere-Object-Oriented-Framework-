@@ -5,10 +5,11 @@ import sys
 import torch.nn as nn
 import torch
 from typing import Union
+import copy
 from tqdm import tqdm
 from datetime import datetime
 import numpy as np
-
+from option.enums import ModelNames, OptimiserNames
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -131,9 +132,118 @@ class BaseModel(object):
         """
         return self._name
 
-    def train(
-        self, batch_size: int, dataset=None, train_diffusion: bool = True
-    ) -> None:
+    def _apply_ema(self):
+        """
+        Applies Exponential Moving Average (EMA) updates to the
+        model's parameters.
+
+        If EMA has not been initialized, this method initializes
+        the EMA model by creating a copy of the current model
+        and setting it to evaluation mode.
+
+        EMA updates are performed if `self._opt.ema_apply` is enabled.
+
+        Raises
+        ------
+        ValueError
+            If the base model (`self.model`) is not defined.
+        """
+        if self._opt.ema_apply:
+            if not hasattr(self, "ema_model") or self.ema_model is None:
+
+                # Check if the model exists
+                if not hasattr(self, "model") or self.model is None:
+                    raise ValueError("Model is not defined. Cannot apply EMA.")
+
+                from model.ema import EMA
+
+                # Initialize EMA model and EMA object
+                self.ema_model = copy.deepcopy(self.model).eval().requires_grad_(False)
+                self.ema = EMA(
+                    beta=self._opt.ema_beta, ema_step_start=self._opt.ema_start_step
+                )
+                print(f"EMA is initialised for {self._opt.model_name}.")
+
+            # Update EMA model's parameters
+            self.ema.step_ema(self.ema_model, self.model)
+
+    def _apply_power_law_ema(self):
+        """
+        Applies Power-Law Exponential Moving Average (Power-Law EMA)
+        updates to the model's parameters.
+
+        If Power-Law EMA has not been initialized, this method
+        initializes the EMA model by creating a copy of the
+        current model and setting it to evaluation mode.
+
+        Power-Law EMA updates are performed if `self._opt.power_ema_apply`
+        is enabled.
+
+        Raises
+        ------
+        ValueError
+            If the base model (`self.model`) is not defined.
+        """
+        if self._opt.power_ema_apply:
+            if not hasattr(self, "ema_model") or self.ema_model is None:
+
+                # Check if the model exists
+                if not hasattr(self, "model") or self.model is None:
+                    raise ValueError("Model is not defined. Cannot apply EMA.")
+
+                from model.ema import PowerLawEMA
+
+                # Initialize EMA model and Power-Law EMA object
+                self.ema_model = copy.deepcopy(self.model).eval().requires_grad_(False)
+                self.ema = PowerLawEMA(
+                    gamma=self._opt.power_ema_gamma,
+                )
+                print(f"Power-Law EMA is initialized for {self._opt.model_name}.")
+
+            # Update EMA model's parameters
+            self.ema.step_ema(self.ema_model, self.model)
+
+    def _apply_ema_logic(self, model_name: str) -> None:
+        """
+        Applies the appropriate EMA logic based on the model name and conditions.
+
+        Parameters
+        ----------
+        model_name : str
+            The name of the model to determine the type of EMA to apply.
+        """
+        model_name = model_name.lower()
+
+        # Early exit if no EMA is applicable
+        if not self._opt.ema_apply and not self._opt.power_ema_apply:
+            return
+
+        # Map model names to their EMA logic with conditions
+        ema_mapping = {
+            ModelNames.DDPMwithEMA: (self._opt.ema_apply, self._apply_ema),
+            ModelNames.DDPMwithPowerLawEMA: (
+                self._opt.power_ema_apply,
+                self._apply_power_law_ema,
+            ),
+            ModelNames.CFG_DDPM_EMA: (self._opt.ema_apply, self._apply_ema),
+            ModelNames.CFG_DDPM_PowerLawEMA: (
+                self._opt.power_ema_apply,
+                self._apply_power_law_ema,
+            ),
+            ModelNames.CFG_Plus_DDPM_EMA: (self._opt.ema_apply, self._apply_ema),
+            ModelNames.CFG_Plus_DDPM_PowerLawEMA: (
+                self._opt.power_ema_apply,
+                self._apply_power_law_ema,
+            ),
+        }
+
+        # Check and apply EMA logic if conditions are met
+        if model_name in ema_mapping:
+            condition, ema_function = ema_mapping[model_name]
+            if condition:  # Ensure the condition is met
+                ema_function()
+
+    def train(self, batch_size: int, dataset=None) -> None:
         """
         This method trains the model.
 
@@ -175,11 +285,14 @@ class BaseModel(object):
         )
 
         # Train the model
-        if train_diffusion:
+        if self._is_train:
             self.model.optimizer.zero_grad()
             loss = self._compute_loss(eps, eps_predicted)
             loss.backward()
             self.model.optimizer.step()
+
+            # Apply EMA logic
+            self._apply_ema_logic(self._opt.model_name)
 
         return eps, eps_predicted
 
@@ -189,7 +302,6 @@ class BaseModel(object):
         cfg_scale: float,
         label_usage: float,
         dataset=None,
-        train_diffusion: bool = True,
     ) -> None:
         """
         This method trains the model using the CFG method
@@ -207,9 +319,6 @@ class BaseModel(object):
 
         dataset : torch.Tensor
             The dataset to use for training.
-
-        train_diffusion : bool
-            Whether to train the diffusion model.
         """
         self.model.train()
 
@@ -245,12 +354,15 @@ class BaseModel(object):
         eps_predicted = eps_uncond + cfg_scale * (eps_cond - eps_uncond)
 
         # Train the model
-        if train_diffusion:
+        if self._is_train:
 
             self.model.optimizer.zero_grad()
             loss = self._compute_loss(eps, eps_predicted)
             loss.backward()
             self.model.optimizer.step()
+
+            # Apply EMA logic
+            self._apply_ema_logic(self._opt.model_name)
 
         return eps, eps_predicted
 
@@ -260,7 +372,6 @@ class BaseModel(object):
         cfg_scale: float,
         label_usage: float,
         dataset=None,
-        train_diffusion: bool = True,
     ) -> None:
         """
         This method trains the model using an enhanced CFG method (CFG+).
@@ -281,9 +392,6 @@ class BaseModel(object):
 
         augmentation_func : Callable, optional
             A function to apply additional augmentations or modifications to inputs.
-
-        train_diffusion : bool
-            Whether to train the diffusion model.
         """
 
         self.model.train()
@@ -334,11 +442,14 @@ class BaseModel(object):
             + torch.sqrt(1 - self.alpha_bar[t - 2].view(-1, 1, 1, 1)) * eps_uncond
         )
 
-        if train_diffusion:
+        if self._is_train:
             self.model.optimizer.zero_grad()
             loss = self._compute_loss(eps, eps_predicted)
             loss.backward()
-            self.model.optimizer.optimizer.step()
+            self.model.optimizer.step()
+
+            # Apply EMA logic
+            self._apply_ema_logic(self._opt.model_name)
 
         return eps, eps_predicted
 
@@ -443,11 +554,11 @@ class BaseModel(object):
         NotImplementedError
             If the method is not implemented
         """
-        if self._opt.optimizer == "adam":
+        if self._opt.optimizer == OptimiserNames.ADAM:
             self.model.optimizer = torch.optim.Adam(
                 self.model.parameters(), lr=self._opt.lr
             )
-        elif self._opt.optimizer == "adamw":
+        elif self._opt.optimizer == OptimiserNames.ADAM_W:
             self.model.optimizer = torch.optim.AdamW(
                 self.model.parameters(), lr=self._opt.lr
             )
