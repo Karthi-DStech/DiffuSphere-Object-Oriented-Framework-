@@ -72,9 +72,10 @@ Each of these models provides flexibility for various use cases, balancing contr
 
 
 ##### ---- `option` Directory ---->
-1. **`base_options.py`**: Defines the base configuration options for datasets, models, and training parameters.
-2. **`train_options.py`**: Extends base options with training-specific configurations such as learning rate and optimizer settings.
-3. **`train_options.py`**: Centralized location for managing constant values like dataset names, model types, and training modes.
+1. **`base_options.py`**: Defines the base configuration options used across all experiments. It uses Python's argparse library to handle command-line arguments.
+2. **`train_options.py`**: Extends base options by adding specific configuration settings for training machine learning models through the pipeline.
+3. **`enums.py`**: Centralized location for managing constant values like dataset names, model types, and training modes.
+4. **`config.py`**: defines configuration classes by utilising data classes module from Python for a structured and type-safe way to manage default parameters. 
 
 
 ##### ---- `utils` Directory ---->
