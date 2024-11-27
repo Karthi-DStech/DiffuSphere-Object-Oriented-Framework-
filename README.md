@@ -29,8 +29,17 @@ The framework supports the training and evaluation of various diffusion models, 
 
 6. **CFG++ EMA**:
    - A CFG++ model incorporating EMA to further enhance stability and generation quality, particularly in fine-grained and high-detail samples.
+  
+7. **DDPM Power Law Decay EMA**:  
+   - A DDPM model that incorporates a power law decay schedule for the EMA updates, allowing for more precise adjustment of weights and improved long-term training stability.
 
-Each of these models provides flexibility for various use cases, balancing control, stability, and sample quality according to the requirements of the task. The modular design of DiffuSphere ensures seamless transitions between models and effortless integration of new variations.
+8. **DDPM CFG Power Law Decay EMA**:  
+   - Combines the Classifier-Free Guidance mechanism with a power law decay EMA schedule, enabling better control of the generation process and producing high-quality outputs with enhanced stability.
+
+9. **DDPM CFG++ Power Law Decay EMA**:  
+   - The most advanced model in the DiffuSphere suite, integrating CFG++, EMA, and a power law decay schedule. This model excels in controlled generation tasks, offering unparalleled stability and sample diversity.
+
+Each of these models provides flexibility for various use cases, balancing control, stability, and sample quality according to the task's requirements. The modular design of DiffuSphere ensures seamless transitions between models and effortless integration of new variations.
 
 
 ## Project Structure and Overview
@@ -65,6 +74,7 @@ Each of these models provides flexibility for various use cases, balancing contr
 ##### ---- `option` Directory ---->
 1. **`base_options.py`**: Defines the base configuration options for datasets, models, and training parameters.
 2. **`train_options.py`**: Extends base options with training-specific configurations such as learning rate and optimizer settings.
+3. **`train_options.py`**: Centralized location for managing constant values like dataset names, model types, and training modes.
 
 
 ##### ---- `utils` Directory ---->
