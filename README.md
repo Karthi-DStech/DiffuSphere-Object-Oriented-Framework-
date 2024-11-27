@@ -30,13 +30,13 @@ The framework supports the training and evaluation of various diffusion models, 
 6. **CFG++ EMA**:
    - A CFG++ model incorporating EMA to further enhance stability and generation quality, particularly in fine-grained and high-detail samples.
   
-7. **DDPM Power Law Decay EMA**:  
+7. **DDPM Power Law EMA**:  
    - A DDPM model that incorporates a power law decay schedule for the EMA updates, allowing for more precise adjustment of weights and improved long-term training stability.
 
-8. **DDPM CFG Power Law Decay EMA**:  
+8. **DDPM CFG Power Law EMA**:  
    - Combines the Classifier-Free Guidance mechanism with a power law decay EMA schedule, enabling better control of the generation process and producing high-quality outputs with enhanced stability.
 
-9. **DDPM CFG++ Power Law Decay EMA**:  
+9. **DDPM CFG++ Power Law EMA**:  
    - The most advanced model in the DiffuSphere suite, integrating CFG++, EMA, and a power law decay schedule. This model excels in controlled generation tasks, offering unparalleled stability and sample diversity.
 
 Each of these models provides flexibility for various use cases, balancing control, stability, and sample quality according to the task's requirements. The modular design of DiffuSphere ensures seamless transitions between models and effortless integration of new variations.
