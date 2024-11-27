@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
 
-import argparse
 from model.models import BaseModel
 from call_methods import make_network
+from option.enums import ModelNames, NetworkNames
+from option.config import TrainOptionsConfig
 
 # ------ Model instance for the DPPM Model ----->>>
 
@@ -17,11 +18,11 @@ class DDPM(BaseModel):
     T : int
         The number of time steps.
 
-    opt : argparse.Namespace
+    opt : TrainOptionsConfig
         The options used to initialize the model.
     """
 
-    def __init__(self, T: int, opt: argparse.Namespace):
+    def __init__(self, T: int, opt: TrainOptionsConfig):
         """
         Initializes the DDPM model.
 
@@ -39,7 +40,7 @@ class DDPM(BaseModel):
 
         super(DDPM, self).__init__(opt)
 
-        self._name = "ddpm_35m"
+        self._name = ModelNames.DDPM
         self.T = T
 
         # Initialize the model (e.g., UNet) and move it to the device
@@ -64,7 +65,7 @@ class DDPM(BaseModel):
         Initialised the UNet model.
         """
         self._unet = make_network(
-            network_name="ddpm_unet",
+            network_name=NetworkNames.DDPM_Unet,
             opt=self._opt,
             ch=self._opt.unet_ch,
             in_ch=self._opt.in_channels,
@@ -143,10 +144,11 @@ class DDPMCFG(BaseModel):
     T : int
         The number of time steps.
 
-    opt : argparse.Namespace
+    opt : TrainOptionsConfig
+        The options used to initialize the model.
     """
 
-    def __init__(self, T: int, opt: argparse.Namespace):
+    def __init__(self, T: int, opt: TrainOptionsConfig):
         """
         Initializes the DDPM model.
 
@@ -163,7 +165,7 @@ class DDPMCFG(BaseModel):
         """
 
         super(DDPMCFG, self).__init__(opt)
-        self._name = "cfg_ddpm"
+        self._name = ModelNames.CFG_DDPM
         self.T = T
 
         # Initialize the model (e.g., UNet) and move it to the device
@@ -188,7 +190,7 @@ class DDPMCFG(BaseModel):
         Initialised the UNet model.
         """
         self._cfg_unet = make_network(
-            network_name="cfg_unet",
+            network_name=NetworkNames.CFG_Unet,
             opt=self._opt,
             ch=self._opt.unet_ch,
             in_ch=self._opt.in_channels,

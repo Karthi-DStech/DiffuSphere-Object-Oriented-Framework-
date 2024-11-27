@@ -3,7 +3,8 @@ import sys
 import argparse
 
 from option.train_options import TrainOptions
-from option.enums import ModelNames, TrainScriptParams
+from option.enums import ModelNames
+from option.config import BaseOptionsConfig, TrainOptionsConfig
 from call_methods import make_dataset, make_model
 from utils.utils import set_seed
 
@@ -46,8 +47,8 @@ def run(opt: argparse.Namespace) -> None:
 
             # Train parameters
             train_params = {
-                TrainScriptParams.BATCH_SIZE: opt.batch_size,
-                TrainScriptParams.DATASET: images,
+                BaseOptionsConfig.BATCH_SIZE: opt.batch_size,
+                BaseOptionsConfig.DATASET: images,
             }
 
             if opt.model_name in [
@@ -58,8 +59,8 @@ def run(opt: argparse.Namespace) -> None:
                 ModelNames.CFG_Plus_DDPM_EMA,
                 ModelNames.CFG_Plus_DDPM_PowerLawEMA,
             ]:
-                train_params[TrainScriptParams.CFG_SCALE] = opt.cfg_scale
-                train_params[TrainScriptParams.LABEL_USAGE] = opt.label_usage
+                train_params[TrainOptionsConfig.CFG_SCALE] = opt.cfg_scale
+                train_params[TrainOptionsConfig.LABEL_USAGE] = opt.label_usage
 
             # Forward pass and training step
             eps, eps_predicted = model.train_method(**train_params)

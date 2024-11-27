@@ -2,6 +2,12 @@ import os
 import sys
 
 from option.base_options import BaseOptions
+from option.enums import (
+    ModelNames,
+    OptimiserNames,
+)
+
+from option.config import BaseOptionsConfig, TrainOptionsConfig
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -24,50 +30,53 @@ class TrainOptions(BaseOptions):
         self._parser.add_argument(
             "--model_name",
             type=str,
-            default="ddpm_35m",
+            default=ModelNames.DDPM,
             choices=[
                 # -- DDPM Variant Names -- >
-                "ddpm_35m",
-                "ddpm_ema",
-                "ddpm_power_law_ema",
+                ModelNames.DDPM,
+                ModelNames.CFG_DDPM,
+                ModelNames.DDPMwithPowerLawEMA,
                 # -- DDPM CFGVariant Names -- >
-                "cfg_ddpm",
-                "cfg_ema_ddpm",
-                "cfg_power_law_ema_ddpm",
+                ModelNames.CFG_DDPM,
+                ModelNames.CFG_DDPM_EMA,
+                ModelNames.CFG_DDPM_PowerLawEMA,
                 # -- DDPM CFG ++ Variant Names -- >
-                "cfg_plus_ddpm",
-                "cfg_plus_ddpm_ema",
-                "cfg_plus_ddpm_power_law_ema",
+                ModelNames.CFG_Plus_DDPM,
+                ModelNames.CFG_Plus_DDPM_EMA,
+                ModelNames.CFG_Plus_DDPM_PowerLawEMA,
             ],
             help="Name of the model to use",
         )
 
         self._parser.add_argument(
-            "--lr", type=float, default=2e-5, help="Learning rate"
+            "--lr", type=float, default=TrainOptionsConfig.LR, help="Learning rate"
         )
 
         self._parser.add_argument(
             "--Time_steps_FD",
             type=int,
-            default=1000,
+            default=TrainOptionsConfig.TIME_STEPS_FD,
             help="Number of time steps for the diffusion model",
         )
 
         self._parser.add_argument(
-            "--nb_images", type=int, default=16, help="Number of images to generate"
+            "--nb_images",
+            type=int,
+            default=TrainOptionsConfig.NB_IMAGES,
+            help="Number of images to generate",
         )
 
         self._parser.add_argument(
             "--unet_ch",
             type=int,
-            default=128,
+            default=TrainOptionsConfig.UNET_CH,
             help="Number of filters for the UNet",
         )
 
         self._parser.add_argument(
             "--optimizer",
             type=str,
-            default="adam",
+            default=OptimiserNames.ADAM,
             choices=["adam", "adamw"],
             help="Optimizer to use",
         )
@@ -75,35 +84,35 @@ class TrainOptions(BaseOptions):
         self._parser.add_argument(
             "--mean",
             type=float,
-            default=0.5,
+            default=TrainOptionsConfig.MEAN,
             help="Mean of the dataset",
         )
 
         self._parser.add_argument(
             "--std",
             type=float,
-            default=0.5,
+            default=TrainOptionsConfig.STD,
             help="Standard deviation of the dataset",
         )
 
         self._parser.add_argument(
             "--continue_train",
             type=bool,
-            default=False,
+            default=TrainOptionsConfig.CONTINUE_TRAIN,
             help="Continue training",
         )
 
         self._parser.add_argument(
             "--print_freq",
             type=int,
-            default=20,
+            default=TrainOptionsConfig.PRINT_FREQ,
             help="Print frequency",
         )
 
         self._parser.add_argument(
             "--save_freq",
             type=int,
-            default=4000,
+            default=TrainOptionsConfig.SAVE_FREQ,
             help="Checkpoint saving frequency of the model over epochs",
         )
 
@@ -112,21 +121,21 @@ class TrainOptions(BaseOptions):
         self._parser.add_argument(
             "--cfg_scale",
             type=float,
-            default=1.0,
+            default=TrainOptionsConfig.CFG_SCALE,
             help="Scale of the Gaussian noise",
         )
 
         self._parser.add_argument(
             "--label_usage",
             type=float,
-            default=0.2,
+            default=TrainOptionsConfig.LABEL_USAGE,
             help="Percentage of labels to use",
         )
 
         self._parser.add_argument(
             "--num_classes",
             type=int,
-            default=5,
+            default=TrainOptionsConfig.NUM_CLASSES,
             help="Number of classes",
         )
 
@@ -135,7 +144,7 @@ class TrainOptions(BaseOptions):
         self._parser.add_argument(
             "--control_cfg_scale",
             type=bool,
-            default=True,
+            default=TrainOptionsConfig.CONTROL_CFG_SCALE,
             help="To control the scale weights for the CFG Plus DDPM",
         )
 
@@ -148,21 +157,21 @@ class TrainOptions(BaseOptions):
         self._parser.add_argument(
             "--ema_apply",
             type=bool,
-            default=False,
+            default=TrainOptionsConfig.EMA_APPLY,
             help="Apply EMA for Diffusion Models",
         )
 
         self._parser.add_argument(
             "--ema_beta",
             type=float,
-            default=0.999,
+            default=TrainOptionsConfig.EMA_BETA,
             help="Beta value for the EMA",
         )
 
         self._parser.add_argument(
             "--ema_start_step",
             type=int,
-            default=30,  # 2000
+            default=TrainOptionsConfig.EMA_START_STEP,  # 2000
             help="Step to start the EMA",
         )
 
@@ -175,14 +184,14 @@ class TrainOptions(BaseOptions):
         self._parser.add_argument(
             "--power_ema_apply",
             type=bool,
-            default=False,
+            default=TrainOptionsConfig.POWER_EMA_APPLY,
             help="Apply Power Law EMA for Diffusion Models",
         )
 
         self._parser.add_argument(
             "--power_ema_gamma",
             type=float,
-            default=6.94,
+            default=TrainOptionsConfig.POWER_EMA_GAMMA,
             choices=[
                 6.94,
                 16.97,
@@ -193,4 +202,4 @@ class TrainOptions(BaseOptions):
 
         # New parameters should be added here
 
-        self._is_train = True
+        self._is_train = BaseOptionsConfig.IS_TRAIN

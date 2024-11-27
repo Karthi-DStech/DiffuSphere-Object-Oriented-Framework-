@@ -3,16 +3,16 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-
 class UpSample(nn.Module):
     """
     This class implements the upsampling block for the UNet model.
-    
+
     Parameters
     ----------
     C : int
-        Number of channels in the input image  
+        Number of channels in the input image
     """
+
     def __init__(self, C):
         super(UpSample, self).__init__()
 
@@ -26,18 +26,20 @@ class UpSample(nn.Module):
         ----------
         x : torch.Tensor
             Input image
-        
+
         Returns
         -------
         torch.Tensor
-            Downsampled image   
+            Downsampled image
         """
-        
+
         if x.ndim != 4:
-            raise ValueError(f"Input tensor must have 4 dimensions (B, C, H, W), but got {x.ndim} dimensions")
-        
-        try: 
-            
+            raise ValueError(
+                f"Input tensor must have 4 dimensions (B, C, H, W), but got {x.ndim} dimensions"
+            )
+
+        try:
+
             B, C, H, W = x.shape
 
             x = F.interpolate(x, size=None, scale_factor=2, mode="nearest")
@@ -47,22 +49,6 @@ class UpSample(nn.Module):
             return x
 
         except Exception as e:
-            raise ValueError(f"An error occured in the forward pass of the upsampling block: {e}")
-
-
-# Test the function of the upsampling block
-    
-"""
-t = (torch.rand(100) * 10).long()
-get_timestep_embedding(t, 64)
-
-downsample = DownSample(64)
-img = torch.randn((10, 64, 400, 400))
-hidden = downsample(img)
-
-upsample = UpSample(64)
-img = upsample(hidden)
-print(img.shape)
-
-"""
-
+            raise ValueError(
+                f"An error occured in the forward pass of the upsampling block: {e}"
+            )
