@@ -1,4 +1,3 @@
-import argparse
 import os
 import sys
 
@@ -6,10 +5,10 @@ import torch.nn as nn
 import torch
 from typing import Union
 import copy
-from tqdm import tqdm
 from datetime import datetime
 import numpy as np
 from option.enums import ModelNames, OptimiserNames
+from option.config import TrainOptionsConfig
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -20,7 +19,7 @@ class BaseModel(object):
 
     Parameters
     ----------
-    opt : argparse.Namespace
+    opt : TrainOptionsConfig
         The options used to initialize the model.
 
     model : nn.Module
@@ -28,7 +27,7 @@ class BaseModel(object):
 
     """
 
-    def __init__(self, opt: argparse.Namespace, model: nn.Module = None) -> None:
+    def __init__(self, opt: TrainOptionsConfig, model: nn.Module = None) -> None:
         """
         Initializes the BaseModel class.
 
@@ -396,7 +395,7 @@ class BaseModel(object):
 
         self.model.train()
 
-        if self._opt.model_name == "cfg_plus_ddpm":
+        if self._opt.model_name == ModelNames.CFG_Plus_DDPM:
             if self._opt.control_cfg_scale:
                 if not (0 <= cfg_scale <= 1):
                     raise ValueError("cfg_scale must be in the range [0, 1] for CFG++")
@@ -452,76 +451,6 @@ class BaseModel(object):
             self._apply_ema_logic(self._opt.model_name)
 
         return eps, eps_predicted
-
-    def test(self) -> None:
-        """
-        This method tests the model.
-        """
-
-        self._unet.eval()
-        self._unet.zero_grad()
-        self._unet._get_current_performance()
-
-    @torch.no_grad()
-    def predict(
-        self, num_samples: int, image_channels, img_size, use_tqdm: True
-    ) -> None:
-        """
-        This method generates samples from the diffusion model using no grad.
-
-        Parameters
-        ----------
-        num_samples : int
-            The number of samples to generate.
-
-        image_channels : int
-            The number of channels in the image.
-
-        img_size : Tuple[int, int]
-            The size of the image.
-
-        use_tqdm : bool
-            Whether to use tqdm for progress bar.
-
-        Returns
-        -------
-        x : torch.Tensor
-            The generated samples.
-        """
-
-        num_samples = self._opt.num_images
-        image_channels = self._opt.image_channels
-        img_size = self._opt.img_size
-
-        x = torch.randn(
-            (num_samples, image_channels, img_size[0], img_size[1]), device=self.device
-        )
-
-        progress_bar = tqdm if use_tqdm else lambda x: x
-        for t in progress_bar(range(self.T, 0, -1)):
-            z = torch.randn_like(x) if t > 1 else torch.zeros_like(x)
-
-            t = torch.ones(num_samples, dtype=torch.long, device=self.device) * t
-
-            beta_t = self.beta[t - 1].unsqueeze(-1).unsqueeze(-1).unsqueeze(-1)
-            alpha_t = self.alpha[t - 1].unsqueeze(-1).unsqueeze(-1).unsqueeze(-1)
-            alpha_bar_t = (
-                self.alpha_bar[t - 1].unsqueeze(-1).unsqueeze(-1).unsqueeze(-1)
-            )
-
-            mean = (
-                1
-                / torch.sqrt(alpha_t)
-                * (
-                    x
-                    - ((1 - alpha_t) / torch.sqrt(1 - alpha_bar_t))
-                    * self.model(x, t - 1)
-                )
-            )
-            sigma = torch.sqrt(beta_t)
-            x = mean + sigma * z
-
-        return x
 
     def _print_num_params(self) -> None:
         """

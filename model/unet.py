@@ -8,10 +8,9 @@ from model.resnet_block import ResNetBlock
 from model.attention_block import AttentionBlock
 from model.timestep_embedding import get_timestep_embedding
 
-# from option.train_options import TrainOptions
-
+from option.config import TrainOptionsConfig
 from model.networks import BaseNetwork
-import argparse
+# from option.train_options import TrainOptions
 
 # ----- UNet Archiecture for Diffusion Model (DDPM) ----->>>>
 
@@ -22,7 +21,7 @@ class UNet(BaseNetwork):
 
     Parameters
     ----------
-    opt: argparse.Namespace
+    opt: TrainOptionsConfig
         The options used to initialize the model.
 
     ch : int
@@ -32,7 +31,7 @@ class UNet(BaseNetwork):
         Number of input channels
     """
 
-    def __init__(self, opt: argparse.Namespace, ch: int, in_ch: int) -> None:
+    def __init__(self, opt: TrainOptionsConfig, ch: int, in_ch: int) -> None:
         super(UNet, self).__init__()
 
         self.ch = ch
@@ -173,7 +172,7 @@ class UnetCFG(BaseNetwork):
 
     Parameters
     ----------
-    opt: argparse.Namespace
+    opt: TrainOptionsConfig
         The options used to initialize the model.
 
     ch : int
@@ -187,7 +186,7 @@ class UnetCFG(BaseNetwork):
     """
 
     def __init__(
-        self, opt: argparse.Namespace, ch: int, in_ch: int, num_classes: int
+        self, opt: TrainOptionsConfig, ch: int, in_ch: int, num_classes: int
     ) -> None:
         super(UnetCFG, self).__init__()
 
@@ -343,24 +342,3 @@ class UnetCFG(BaseNetwork):
         x = self.final_conv(x)
 
         return x
-
-
-# Test the function of the UNet model
-
-"""
-opt = TrainOptions().parse()
-
-t = (torch.rand (32) * 10).long()
-
-img = torch.randn((32, 1, 32, 32))
-model = UNet(ch=opt.unet_ch, in_ch=opt.in_channels, opt=opt)
-print(model)
-print(sum([p.numel() for p in model.parameters()]))
-print('completed...............')
-img = model(img, t)
-
-print(img.shape)
-
-print(sum([p.numel() for p in model.parameters()]))
-
-"""

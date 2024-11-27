@@ -26,6 +26,7 @@ class NetworkNames(StrEnum):
     that are used for training and inference.
     """
 
+    BASE_NETWORK = "base_network"
     DDPM_Unet = "ddpm_unet"
     CFG_Unet = "cfg_unet"
 
@@ -48,16 +49,3 @@ class OptimiserNames(StrEnum):
 
     ADAM = "adam"
     ADAM_W = "adamw"
-
-
-class TrainScriptParams(StrEnum):
-    """
-    This class contains the names of the parameters that are
-    used for training the models in 'train.py'.
-    """
-
-    BATCH_SIZE = "batch_size"
-    DATASET = "dataset"
-
-    CFG_SCALE = "cfg_scale"
-    LABEL_USAGE = "label_usage"

@@ -50,24 +50,3 @@ class Nin(nn.Module):
             Output tensor of shape (B, O, H, W) where O is the output dimension.
         """
         return torch.einsum("bchw, co->bowh", x, self.W) + self.b
-
-
-# Test the function of the Network in Network block
-
-"""
-
-t = (torch.rand(100) * 10).long()
-get_timestep_embedding(t, 64)
-
-downsample = DownSample(64)
-img = torch.randn((10, 64, 400, 400))
-hidden = downsample(img)
-
-upsample = DownSample(64)
-img = upsample(hidden)
-print(img.shape)
-
-nin = Nin(64, 128)
-print(nin(img).shape)
-
-"""

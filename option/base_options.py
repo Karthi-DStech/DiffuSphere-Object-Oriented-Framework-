@@ -3,6 +3,8 @@ import ast
 import os
 import sys
 from typing import Dict
+from option.enums import DatasetNames
+from option.config import BaseOptionsConfig
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -20,14 +22,14 @@ class BaseOptions:
             "--images_folder",
             type=str,
             required=False,
-            default="../Datasets/Topographies/raw/FiguresStacked 8X8_4X4_2X2 Embossed",
+            default=BaseOptionsConfig.IMAGES_FOLDER,
             help="path to the images",
         )
         self._parser.add_argument(
             "--label_path",
             type=str,
             required=False,
-            default="../Datasets/biology_data/TopoChip/AeruginosaWithClass.csv",
+            default=BaseOptionsConfig.LABEL_PATH,
             help="path to the label csv file",
         )
 
@@ -35,7 +37,7 @@ class BaseOptions:
             "--dataset_name",
             type=str,
             required=False,
-            default="biological",
+            default=DatasetNames.BIOLOGICAL,
             help="dataset name",
             choices=["mnist", "biological"],
         )
@@ -47,21 +49,26 @@ class BaseOptions:
             default={"mean": 0.5, "std": 0.5},
             help="mean and standard deviation of the dataset for normalisation",
         )
+
         self._parser.add_argument(
             "--n_epochs",
             type=int,
             required=False,
-            default=40000,
+            default=BaseOptionsConfig.N_EPOCHS,
             help="number of epochs",
         )
         self._parser.add_argument(
-            "--img_type", type=str, required=False, default="png", help="image type"
+            "--img_type",
+            type=str,
+            required=False,
+            default=BaseOptionsConfig.IMG_TYPE,
+            help="image type",
         )
         self._parser.add_argument(
             "--img_size",
             type=int,
             required=False,
-            default=32,
+            default=BaseOptionsConfig.IMG_SIZE,
             choices=[32, 64, 128, 256],
             help="image size",
         )
@@ -70,35 +77,43 @@ class BaseOptions:
             "--in_channels",
             type=int,
             required=False,
-            default=1,
+            default=BaseOptionsConfig.IN_CHANNELS,
             help="number of input channels",
         )
         self._parser.add_argument(
             "--out_channels",
             type=int,
             required=False,
-            default=1,
+            default=BaseOptionsConfig.OUT_CHANNELS,
             help="number of output channels",
         )
         self._parser.add_argument(
-            "--batch_size", type=int, required=False, default=32, help="batch size"
+            "--batch_size",
+            type=int,
+            required=False,
+            default=BaseOptionsConfig.BATCH_SIZE,
+            help="batch size",
         )
         self._parser.add_argument(
             "--num_workers",
             type=int,
             required=False,
-            default=4,
+            default=BaseOptionsConfig.NUM_WORKERS,
             help="number of workers",
         )
 
         self._parser.add_argument(
-            "--seed", type=int, required=False, default=101, help="random seed"
+            "--seed",
+            type=int,
+            required=False,
+            default=BaseOptionsConfig.SEED,
+            help="random seed",
         )
 
         self._parser.add_argument(
             "--save_dir",
             type=str,
-            default="./artifacts",
+            default=BaseOptionsConfig.SAVE_DIR,
             help="Path to save the artifacts of the model",
         )
 

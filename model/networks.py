@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 
 from typing import Tuple
+from option.enums import NetworkNames
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -19,7 +20,7 @@ class BaseNetwork(nn.Module):
         Initializes the BaseNetwork class
         """
         super().__init__()
-        self._name = "BaseNetwork"
+        self._name = NetworkNames.BASE_NETWORK
 
     @property
     def name(self) -> str:

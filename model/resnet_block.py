@@ -65,33 +65,3 @@ class ResNetBlock(nn.Module):
 
         assert x.shape == h.shape
         return x + h
-
-
-# Test the function of the Residual block
-
-"""
-
-t = (torch.rand (10) * 10).long()
-temb= get_timestep_embedding (t, 512)
-
-downsample = DownSample(64)
-img = torch.randn((10, 64, 128, 128))
-hidden  = downsample(img)
-
-upsample = UpSample(64)
-img = upsample(hidden)
-print(img.shape)
-
-nin = Nin(64, 128)
-print(nin(img).shape)
-img = nin(img)
-
-resnet = ResNetBlock(128, 128, 0.1)
-img = resnet(img, temb)
-print(img.shape)
-
-resnet = ResNetBlock(128, 64, 0.1)
-img = resnet(img, temb)
-print(img.shape)
-    
-"""

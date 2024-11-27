@@ -71,17 +71,14 @@ class BaseDataset(torch.utils.data.Dataset):
         """
         print(f"{self._name} dataset has {len(self)} samples")
 
-        # Check for labels in the first batch
-        try:
-            sample = self[0]
-            if isinstance(sample, tuple) and len(sample) == 2:
-                _, labels = sample
-                print(f"Dataset has labels with {len(self)} entries.")
-                self._labels_exist = True
-            else:
-                print("No labels used in the dataset.")
-        except Exception:
+        sample = self[0]
+        if isinstance(sample, tuple) and len(sample) == 2:
+            _, labels = sample
+            print(f"Dataset has labels with {len(self)} entries.")
+            self._labels_exist = True
+        else:
             print("No labels used in the dataset.")
+            self._labels_exist = False
 
     def print_dataloader_info(self) -> None:
         """

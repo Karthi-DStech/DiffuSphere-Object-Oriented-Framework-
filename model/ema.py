@@ -212,21 +212,3 @@ class PowerLawEMA:
             updated parameters.
         """
         ema_model.load_state_dict(model.state_dict())
-
-
-# Testing the EMA class step_ema method
-
-"""
-def step_ema(self, ema_model, model):
-
-        if self.step < self.step_start_ema:
-            print(
-                f"Step {self.step}: Resetting EMA model parameters (start step: {self.step_start_ema})."
-            )
-            self.reset_parameters(ema_model, model)
-        else:
-            print(f"Step {self.step}: Applying EMA updates.")
-            self.update_moving_average(ema_model, model)
-
-        self.step += 1
-"""
