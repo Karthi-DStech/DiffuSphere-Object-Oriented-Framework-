@@ -6,7 +6,7 @@
 
 With **DiffuSphere**, **zero coding is required to generate images using the latest and most powerful diffusion model variants**. The framework is designed to work out-of-the-box, allowing users to leverage advanced diffusion models without writing a single line of code. 
 
-- Furthermore, integrating new models into the framework is incredibly straightforward, as 95% of the required code infrastructure is already in place. This allows researchers and developers to focus on innovation rather than boilerplate code.
+- Furthermore, integrating new models into the framework is incredibly straightforward, as **99% of the required code infrastructure is already in place**. This allows researchers and developers to focus on innovation rather than boilerplate code.
 
 ### Supported Models
 
