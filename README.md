@@ -1,8 +1,8 @@
 # DiffuSphere - An Object-Oriented Framework for Image Generation using Diffusion Models and their Variants.
 
 **Directory Structure**
-
 Directory structure:
+```
 └── karthi-dstech-diffusphere-object-oriented-framework-/
     ├── README.md
     ├── call_methods.py
@@ -33,6 +33,7 @@ Directory structure:
     └── utils/
         ├── images_utils.py
         └── utils.py
+```
 
 **DiffuSphere is a cutting-edge framework** designed to streamline and enhance the process of **image generation using diffusion models**. Built with industry-standard coding methodologies, DiffuSphere ensures high scalability, maintainability, and efficient bug tracking, making it suitable for research and production environments. 
 
