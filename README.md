@@ -1,5 +1,39 @@
 # DiffuSphere - An Object-Oriented Framework for Image Generation using Diffusion Models and their Variants.
 
+**Directory Structure**
+
+Directory structure:
+└── karthi-dstech-diffusphere-object-oriented-framework-/
+    ├── README.md
+    ├── call_methods.py
+    ├── train.py
+    ├── data/
+    │   ├── datasets.py
+    │   ├── mnist.py
+    │   └── topographies.py
+    ├── launch/
+    │   └── train.sh
+    ├── model/
+    │   ├── attention_block.py
+    │   ├── ddpm.py
+    │   ├── downsampling_block.py
+    │   ├── ema.py
+    │   ├── models.py
+    │   ├── networks.py
+    │   ├── nin_block.py
+    │   ├── resnet_block.py
+    │   ├── timestep_embedding.py
+    │   ├── unet.py
+    │   └── upsampling_block.py
+    ├── option/
+    │   ├── base_options.py
+    │   ├── config.py
+    │   ├── enums.py
+    │   └── train_options.py
+    └── utils/
+        ├── images_utils.py
+        └── utils.py
+
 **DiffuSphere is a cutting-edge framework** designed to streamline and enhance the process of **image generation using diffusion models**. Built with industry-standard coding methodologies, DiffuSphere ensures high scalability, maintainability, and efficient bug tracking, making it suitable for research and production environments. 
 
 - The framework adopts a modular and object-oriented architecture, enabling developers to extend or customize its components effortlessly while maintaining code clarity and robustness.
